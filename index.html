@@ -111,6 +111,7 @@
             font-size: 1rem;
         }
 
+        /* User Message Styling */
         .message-row.user {
             justify-content: flex-end;
         }
@@ -122,9 +123,11 @@
             color: var(--text-primary);
             max-width: 85%;
             word-wrap: break-word;
-            white-space: pre-wrap;
+            /* Allow basic line breaks in user text */
+            white-space: pre-wrap; 
         }
 
+        /* Bot Message Styling */
         .message-row.bot {
             justify-content: flex-start;
             gap: 16px;
@@ -135,11 +138,9 @@
             color: var(--text-primary);
             max-width: 90%;
             width: 100%;
-            /* marked.js manages `<p>` tags naturally, so we use normal white-space */
-            white-space: normal; 
         }
 
-        /* Avatar styling */
+        /* Animated Bot Avatar */
         .bot-avatar {
             width: 36px;
             height: 36px;
@@ -147,6 +148,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(155, 114, 203, 0.3)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 10px rgba(155, 114, 203, 0.6)); }
         }
 
         /* ==========================================
@@ -154,17 +161,25 @@
            ========================================== */
         .bot-message-body p { margin-bottom: 16px; }
         .bot-message-body p:last-child { margin-bottom: 0; }
-        
         .bot-message-body strong { font-weight: 600; color: #fff; }
         
+        /* Headers */
+        .bot-message-body h1, .bot-message-body h2, .bot-message-body h3 {
+            font-family: var(--font-heading);
+            margin: 24px 0 12px 0;
+            color: var(--text-primary);
+        }
+        .bot-message-body h1 { font-size: 1.5rem; }
+        .bot-message-body h2 { font-size: 1.3rem; }
+        .bot-message-body h3 { font-size: 1.1rem; }
+
+        /* Lists */
         .bot-message-body ul, .bot-message-body ol {
             margin: 12px 0 16px 28px;
         }
+        .bot-message-body li { margin-bottom: 6px; }
 
-        .bot-message-body li {
-            margin-bottom: 8px;
-        }
-
+        /* Inline & Block Code */
         .bot-message-body code {
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg-input);
@@ -181,7 +196,6 @@
             border-radius: 12px;
             overflow-x: auto;
             margin: 16px 0;
-            white-space: pre; 
             border: 1px solid var(--border-subtle);
         }
 
@@ -193,97 +207,8 @@
             border: none;
         }
 
-        .bot-message-body blockquote {
-            border-left: 4px solid #a8c7fa;
-            padding-left: 16px;
-            margin: 16px 0;
-            color: #c4c7c5;
-            font-style: italic;
-        }
-
-        .bot-message-body table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 16px 0;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .bot-message-body th, .bot-message-body td {
-            border: 1px solid var(--border-subtle);
-            padding: 12px;
-            text-align: left;
-        }
-
-        .bot-message-body th {
-            background-color: rgba(255, 255, 255, 0.05);
-            font-weight: 600;
-        }
-
         /* ==========================================
-           5. Thinking Animation & Error State
-           ========================================== */
-        @keyframes gemini-spin-breathe {
-            0% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 2px rgba(66, 133, 244, 0.4)); }
-            50% { transform: rotate(180deg) scale(1.15); filter: drop-shadow(0 0 12px rgba(155, 114, 203, 0.9)); }
-            100% { transform: rotate(360deg) scale(1); filter: drop-shadow(0 0 2px rgba(66, 133, 244, 0.4)); }
-        }
-
-        .thinking-star {
-            animation: gemini-spin-breathe 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-
-        .shimmer-text {
-            background: linear-gradient(90deg, #444746 0%, #ffffff 50%, #444746 100%);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            animation: shimmer 1.5s infinite linear;
-            font-weight: 500;
-            font-size: 1.1rem;
-            align-self: center;
-        }
-
-        @keyframes shimmer {
-            to { background-position: 200% center; }
-        }
-
-        .error-container {
-            background-color: rgba(255, 77, 77, 0.1);
-            border: 1px solid rgba(255, 77, 77, 0.3);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-width: 85%;
-        }
-
-        .error-message {
-            color: #ff8b94;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .retry-btn {
-            align-self: flex-start;
-            background: #ff4d4d;
-            color: #131314;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.2s;
-        }
-
-        .retry-btn:hover { background: #ff6b6b; }
-
-        /* ==========================================
-           6. Floating Input Area & Modal
+           5. Floating Input Area & Buttons
            ========================================== */
         .input-wrapper {
             position: fixed;
@@ -331,49 +256,136 @@
             color: var(--text-primary);
         }
 
-        .icon-btn svg { width: 24px; height: 24px; fill: currentColor; transition: fill 0.2s; }
+        .icon-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            transition: fill 0.2s;
+        }
 
         #send-btn { margin-left: 8px; margin-bottom: 4px; }
         #send-btn svg { width: 36px; height: 36px; fill: none; }
 
         #user-input {
-            flex: 1; background: transparent; border: none; outline: none; padding: 12px 0;
-            font-family: var(--font-body); font-size: 1rem; max-height: 200px;
-            resize: none; color: var(--text-primary); line-height: 1.5;
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 12px 0;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            max-height: 200px;
+            resize: none;
+            color: var(--text-primary);
+            line-height: 1.5;
         }
+
         #user-input::placeholder { color: #8e918f; }
 
+        /* ==========================================
+           6. User Note Modal (Dark Mode MD3)
+           ========================================== */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(0, 0, 0, 0.7); display: none; align-items: center;
-            justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
         }
+
         .modal-overlay.active { display: flex; }
 
         .modal-content {
-            background: var(--bg-main); width: 90%; max-width: 500px; padding: 32px;
-            border-radius: 28px; box-shadow: var(--md3-shadow); display: flex;
-            flex-direction: column; gap: 20px; border: 1px solid var(--border-subtle);
+            background: var(--bg-main);
+            width: 90%;
+            max-width: 500px;
+            padding: 32px;
+            border-radius: 28px;
+            box-shadow: var(--md3-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border: 1px solid var(--border-subtle);
         }
-        .modal-content h3 { font-family: var(--font-heading); font-weight: 500; font-size: 1.5rem; color: var(--text-primary); }
-        .modal-content p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+        .modal-content h3 {
+            font-family: var(--font-heading);
+            font-weight: 500;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .modal-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
 
         .modal-content textarea {
-            width: 100%; height: 150px; padding: 16px; background: var(--bg-input);
-            color: var(--text-primary); border: 1px solid var(--border-subtle);
-            border-radius: 12px; resize: none; outline: none; font-family: var(--font-body);
-            font-size: 1rem; transition: border-color 0.2s;
+            width: 100%;
+            height: 150px;
+            padding: 16px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            resize: none;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border-color 0.2s;
         }
+
         .modal-content textarea:focus { border-color: var(--primary-blue); }
 
-        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-        .btn { padding: 10px 24px; border-radius: 24px; border: none; cursor: pointer; font-weight: 500; font-size: 0.95rem; transition: background 0.2s; }
-        .btn-cancel { background: transparent; color: var(--primary-blue); }
+        .modal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 24px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--primary-blue);
+        }
         .btn-cancel:hover { background: var(--hover-bg); }
-        .btn-save { background: var(--primary-blue); color: #000; }
+
+        .btn-save {
+            background: var(--primary-blue);
+            color: #000; 
+        }
         .btn-save:hover { background: #bcdcff; }
 
-        .system-notice { text-align: center; color: var(--text-secondary); font-size: 0.85rem; margin: 16px 0; font-family: var(--font-body); }
+        /* New Reset Button Style */
+        .btn-reset {
+            background: transparent;
+            color: #f28b82; /* Soft red for dark mode */
+            margin-right: auto; /* Pushes to the left side of the modal actions */
+            padding: 10px 16px;
+        }
+        .btn-reset:hover { background: rgba(242, 139, 130, 0.1); }
+
+        .system-notice {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 16px 0;
+            font-family: var(--font-body);
+        }
     </style>
 </head>
 <body>
@@ -435,8 +447,9 @@
         <div class="modal-content">
             <h3>시스템 프롬프트 설정</h3>
             <p>AI의 페르소나, 역할, 또는 답변 방식을 지시하는 배경 컨텍스트를 입력하세요.</p>
-            <textarea id="system-prompt-input" placeholder="예: 당신은 친절한 한국어 교사입니다."></textarea>
+            <textarea id="system-prompt-input" placeholder="예: 당신은 친절한 한국어 교사입니다. 문법 오류를 항상 수정해주세요."></textarea>
             <div class="modal-actions">
+                <button class="btn btn-reset" id="reset-note-btn">기본값 초기화</button>
                 <button class="btn btn-cancel" id="close-modal-btn">취소</button>
                 <button class="btn btn-save" id="save-note-btn">저장</button>
             </div>
@@ -447,8 +460,14 @@
         // ==========================================
         // 🛑 API CONFIGURATION 🛑
         // ==========================================
-        const API_KEY ='AQ.Ab8RN6IVP1kQOkiDBRZZ_eb4Elr2YbUOSGMOILsWn5sSje2jwg'; 
+        const API_KEY = 'AQ.Ab8RN6IVP1kQOkiDBRZZ_eb4Elr2YbUOSGMOILsWn5sSje2jwg'; 
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${API_KEY}`;
+
+        // Configure Marked.js Options for standard GitHub Flavored Markdown (line breaks, etc.)
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
 
         // DOM Elements
         const chatMessages = document.getElementById('chat-messages');
@@ -459,23 +478,20 @@
         const noteModal = document.getElementById('note-modal');
         const closeModalBtn = document.getElementById('close-modal-btn');
         const saveNoteBtn = document.getElementById('save-note-btn');
+        const resetNoteBtn = document.getElementById('reset-note-btn');
         const systemPromptInput = document.getElementById('system-prompt-input');
 
-        // State Variables
+        // State Variables & Local Storage Initialization
         let chatHistory = [];
         const DEFAULT_SYSTEM_PROMPT = `당신은 구글 제미나이(Google Gemini)와 같은 다목적 AI 어시스턴트입니다. 사용자의 언어에 맞춰 자연스럽고 정확하게 답변해야 합니다.`;
-        let currentSystemInstruction = DEFAULT_SYSTEM_PROMPT;
+        
+        // Retrieve saved prompt from LocalStorage, otherwise fallback to DEFAULT
+        let currentSystemInstruction = localStorage.getItem('gemini_clone_system_prompt') || DEFAULT_SYSTEM_PROMPT;
 
         // Auto-resize textarea
         userInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight < 200 ? this.scrollHeight : 200) + 'px';
-        });
-
-        // Setup marked.js options for security and styling formatting
-        marked.setOptions({
-            breaks: true, // Enables standard line breaks
-            gfm: true     // Enables GitHub Flavored Markdown (tables, task lists)
         });
 
         // Appends Notice
@@ -487,7 +503,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Appends User or Bot Message
+        // Appends Message using marked.js parser for bot responses
         function appendMessage(sender, text) {
             const rowDiv = document.createElement('div');
             rowDiv.classList.add('message-row', sender);
@@ -512,81 +528,23 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Animated Thinking State Management
-        function showThinking() {
-            const rowDiv = document.createElement('div');
-            rowDiv.classList.add('message-row', 'bot');
-            rowDiv.id = 'thinking-indicator';
-
-            rowDiv.innerHTML = `
-                <div class="bot-avatar thinking-star">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 8C16 8 17 5 20 5C17 5 16 2 16 2C16 2 15 5 12 5C15 5 16 8 16 8Z" fill="url(#gemini-grad)"/>
-                        <path d="M9.5 14.5C9.5 14.5 11 8.5 17 8.5C11 8.5 9.5 2.5 9.5 2.5C9.5 2.5 8 8.5 2 8.5C8 8.5 9.5 14.5 9.5 14.5Z" fill="url(#gemini-grad)"/>
-                    </svg>
-                </div>
-                <div class="message-content shimmer-text">생각 중...</div>
-            `;
-            chatMessages.appendChild(rowDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function removeThinking() {
-            const indicator = document.getElementById('thinking-indicator');
-            if (indicator) indicator.remove();
-        }
-
-        // User-Friendly Error Box
-        function showErrorBox() {
-            const rowDiv = document.createElement('div');
-            rowDiv.classList.add('message-row', 'bot');
-            rowDiv.id = 'api-error-box';
-
-            rowDiv.innerHTML = `
-                <div class="bot-avatar">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#ff4d4d"/>
-                    </svg>
-                </div>
-                <div class="error-container">
-                    <div class="error-message">응답을 생성하는 중 오류가 발생했습니다.<br>네트워크 연결이나 API 키를 확인해주세요.</div>
-                    <button class="retry-btn" onclick="triggerAPICall()">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                        다시 시도
-                    </button>
-                </div>
-            `;
-            chatMessages.appendChild(rowDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Processing Input
-        async function submitUserInput() {
+        // Send Logic
+        async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
+            // Display User Message
             appendMessage('user', text);
             userInput.value = '';
-            userInput.style.height = 'auto'; // Reset height
-            
+            userInput.style.height = 'auto';
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+
+            // Add user message to state
             chatHistory.push({
                 role: "user",
                 parts: [{ text: text }]
             });
-
-            await triggerAPICall();
-        }
-
-        // Core Fetch Logic (Separated for Retry capability)
-        async function triggerAPICall() {
-            // Remove any existing error UI before starting
-            const existingError = document.getElementById('api-error-box');
-            if (existingError) existingError.remove();
-
-            userInput.disabled = true;
-            sendBtn.disabled = true;
-            
-            showThinking();
 
             const payload = {
                 systemInstruction: {
@@ -612,13 +570,11 @@
                     parts: [{ text: botReply }]
                 });
 
-                removeThinking();
                 appendMessage('bot', botReply);
 
             } catch (error) {
                 console.error("API Error:", error);
-                removeThinking();
-                showErrorBox();
+                appendMessage('bot', "오류가 발생했습니다. 네트워크 연결이나 API 키를 확인해주세요.");
             } finally {
                 userInput.disabled = false;
                 sendBtn.disabled = false;
@@ -627,39 +583,51 @@
         }
 
         // --- Event Listeners ---
-        sendBtn.addEventListener('click', submitUserInput);
+        sendBtn.addEventListener('click', sendMessage);
         
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
                 if (e.isComposing) return; // Prevent double trigger with Korean IME
-                submitUserInput();
+                sendMessage();
             }
         });
 
+        // Chat Reset Logic
         geminiModeBtn.addEventListener('click', () => {
-            currentSystemInstruction = DEFAULT_SYSTEM_PROMPT;
             chatHistory = [];
             appendNotice("✦ 대화가 초기화되었습니다.");
         });
 
+        // Modal Open Logic (Shows saved custom prompt if it exists, otherwise empty)
         userNoteBtn.addEventListener('click', () => {
-            // UPDATED: Modal now persists and displays the current instruction state
-            systemPromptInput.value = currentSystemInstruction;
+            systemPromptInput.value = localStorage.getItem('gemini_clone_system_prompt') || '';
             noteModal.classList.add('active');
         });
 
         closeModalBtn.addEventListener('click', () => noteModal.classList.remove('active'));
 
+        // Local Storage System Prompt Save Logic
         saveNoteBtn.addEventListener('click', () => {
             const newPrompt = systemPromptInput.value.trim();
             if (newPrompt) {
                 currentSystemInstruction = newPrompt;
-                appendNotice("✦ 시스템 프롬프트가 업데이트되었습니다.");
+                localStorage.setItem('gemini_clone_system_prompt', newPrompt);
+                appendNotice("✦ 시스템 프롬프트가 저장되었습니다. 이후 접속 시에도 유지됩니다.");
             }
             noteModal.classList.remove('active');
         });
 
+        // Local Storage Reset/Clear Logic
+        resetNoteBtn.addEventListener('click', () => {
+            currentSystemInstruction = DEFAULT_SYSTEM_PROMPT;
+            localStorage.removeItem('gemini_clone_system_prompt');
+            systemPromptInput.value = '';
+            noteModal.classList.remove('active');
+            appendNotice("✦ 시스템 프롬프트가 기본값으로 초기화되었습니다.");
+        });
+
+        // Close modal when clicking outside of it
         noteModal.addEventListener('click', (e) => {
             if (e.target === noteModal) noteModal.classList.remove('active');
         });
