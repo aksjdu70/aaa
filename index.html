@@ -263,7 +263,7 @@
         #send-btn svg {
             width: 36px;
             height: 36px;
-            fill: none; /* Keeps the stroke paths visible without filling the whole SVG */
+            fill: none;
         }
 
         #user-input {
@@ -458,6 +458,8 @@
         // 🛑 API CONFIGURATION 🛑
         // ==========================================
         const API_KEY = 'AQ.Ab8RN6IVP1kQOkiDBRZZ_eb4Elr2YbUOSGMOILsWn5sSje2jwg'; 
+        
+        // Updated to target Gemini 3.1 Flash
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash:generateContent?key=${API_KEY}`;
 
         // DOM Elements
@@ -473,6 +475,8 @@
 
         // State Variables
         let chatHistory = [];
+        
+        // The default prompt is set to the underlying text instructions that previously populated the modal
         const DEFAULT_SYSTEM_PROMPT = `당신은 구글 제미나이(Google Gemini)와 같은 다목적 AI 어시스턴트입니다. 사용자의 언어에 맞춰 자연스럽고 정확하게 답변해야 합니다.`;
         let currentSystemInstruction = DEFAULT_SYSTEM_PROMPT;
 
@@ -598,7 +602,8 @@
         });
 
         userNoteBtn.addEventListener('click', () => {
-            systemPromptInput.value = currentSystemInstruction;
+            // Updated: Clears the content inside the user note modal so the textarea is completely empty by default
+            systemPromptInput.value = '';
             noteModal.classList.add('active');
         });
 
