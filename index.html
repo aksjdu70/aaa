@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Gemini Clone - Dark Mode</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 
     <style>
         /* ==========================================
@@ -18,9 +15,9 @@
             --bg-main: #131314;
             --bg-input: #1e1f20;
             --text-primary: #e3e3e3;
-            --text-secondary: #c4c7c5;
+            --text-secondary: #c4c7c5; /* Off-white for idle icons/text */
             --border-subtle: #444746;
-            --primary-blue: #a8c7fa; /* Dark mode optimized blue */
+            --primary-blue: #a8c7fa; 
             --user-bubble: #1e1f20;
             --hover-bg: rgba(255, 255, 255, 0.08);
             --md3-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -71,12 +68,18 @@
             font-weight: 500;
             color: var(--text-secondary);
             display: flex;
+            justify-content: space-between; /* Pushes logo left, button right */
             align-items: center;
-            gap: 12px;
             user-select: none;
         }
 
-        .top-nav span {
+        .top-nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-nav .logo span {
             font-size: 1.5rem;
             background: -webkit-linear-gradient(45deg, #4285f4, #9b72cb, #d96570);
             -webkit-background-clip: text;
@@ -173,7 +176,7 @@
             padding: 3px 6px;
             border-radius: 6px;
             font-size: 0.9em;
-            color: #ff8b94; /* Lightened red for dark mode */
+            color: #ff8b94; 
         }
 
         .bot-message-body pre {
@@ -196,7 +199,7 @@
         }
 
         /* ==========================================
-           5. Floating Input Area
+           5. Floating Input Area & Buttons
            ========================================== */
         .input-wrapper {
             position: fixed;
@@ -214,7 +217,7 @@
         }
 
         .input-wrapper:focus-within {
-            background-color: #282a2c; /* Slightly lighter dark gray on focus */
+            background-color: #282a2c; 
             box-shadow: var(--md3-shadow);
         }
 
@@ -235,7 +238,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--text-secondary);
+            color: var(--text-secondary); /* Applied to current SVG fill */
             transition: background-color 0.2s, color 0.2s;
         }
 
@@ -244,9 +247,25 @@
             color: var(--text-primary);
         }
 
-        .material-symbols-rounded {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            font-size: 24px;
+        /* Standard SVG sizing inside buttons */
+        .icon-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            transition: fill 0.2s;
+        }
+
+        /* Send button has unique coloring/sizing overrides */
+        #send-btn {
+            margin-left: 8px;
+            margin-bottom: 4px;
+        }
+        
+        #send-btn svg {
+            width: 36px;
+            height: 36px;
+            /* Removes currentColor to allow the hardcoded blue/white to show */
+            fill: none; 
         }
 
         #user-input {
@@ -265,11 +284,6 @@
 
         #user-input::placeholder {
             color: #8e918f;
-        }
-
-        #send-btn {
-            margin-left: 8px;
-            margin-bottom: 4px;
         }
 
         /* ==========================================
@@ -360,7 +374,7 @@
 
         .btn-save {
             background: var(--primary-blue);
-            color: #000; /* Dark text on light blue button */
+            color: #000; 
         }
 
         .btn-save:hover { background: #bcdcff; }
@@ -377,7 +391,17 @@
 <body>
 
     <header class="top-nav">
-        <span>✦</span> Gemini
+        <div class="logo">
+            <span>✦</span> Gemini
+        </div>
+        
+        <button class="icon-btn" id="user-note-btn" title="시스템 프롬프트 설정">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 19V5h14v14H5z" />
+                <path d="M7 7h10v2H7zm0 4h7v2H7z" />
+                <path d="M19.3 8.92c.39-.39.39-1.02 0-1.41l-1.58-1.58c-.39-.39-1.02-.39-1.41 0l-1.59 1.59 2.99 2.99 1.59-1.59zm-8.8 8.8l-2.99-2.99L15.3 6.94l2.99 2.99-7.79 7.79zM7 17v-2.99l.02-.02 2.97 2.97-.02.02H7z" />
+            </svg>
+        </button>
     </header>
 
     <main class="chat-container" id="chat-messages">
@@ -401,13 +425,21 @@
 
     <div class="input-wrapper">
         <div class="input-tools">
-            <button class="icon-btn material-symbols-rounded" id="gemini-mode-btn" title="대화 초기화">refresh</button>
-            <button class="icon-btn material-symbols-rounded" id="user-note-btn" title="시스템 프롬프트 설정">edit_note</button>
+            <button class="icon-btn" id="gemini-mode-btn" title="대화 초기화">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                </svg>
+            </button>
         </div>
 
         <textarea id="user-input" rows="1" placeholder="여기에 프롬프트를 입력하세요..." autocomplete="off"></textarea>
         
-        <button class="icon-btn material-symbols-rounded" id="send-btn" title="보내기">send</button>
+        <button class="icon-btn" id="send-btn" title="보내기">
+            <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="20" fill="#1A73E8" />
+                <path d="M20 10l-7 7h5v11h4V17h5l-7-7z" fill="#ffffff" />
+            </svg>
+        </button>
     </div>
 
     <div class="modal-overlay" id="note-modal">
@@ -427,8 +459,6 @@
         // 🛑 API CONFIGURATION 🛑
         // ==========================================
         const API_KEY = 'AQ.Ab8RN6IVP1kQOkiDBRZZ_eb4Elr2YbUOSGMOILsWn5sSje2jwg'; 
-        
-        // Updated to target gemini-2.5-flash as requested
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
         // DOM Elements
@@ -551,12 +581,12 @@
             }
         }
 
-        // --- Core Fix for Requirements 1 (Korean IME & keydown) ---
+        // --- Core Fixes (Korean IME & keydown) ---
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // Prevents newline from forming
-                if (e.isComposing) return; // Ignores event if user is currently composing a CJK character
+                e.preventDefault(); 
+                if (e.isComposing) return; 
                 sendMessage();
             }
         });
@@ -567,6 +597,7 @@
             appendNotice("✦ 대화가 초기화되었습니다.");
         });
 
+        // The User Note Button is now in the header, functionality remains identical
         userNoteBtn.addEventListener('click', () => {
             systemPromptInput.value = currentSystemInstruction;
             noteModal.classList.add('active');
