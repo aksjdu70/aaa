@@ -307,7 +307,7 @@
 
     <header class="top-nav">
         <div class="logo">
-            <span>✦</span> Gemini
+            <span>✦</span> Gemini???
         </div>
         
         <button class="icon-btn" id="user-note-btn" title="시스템 프롬프트 설정">
@@ -335,7 +335,7 @@
                     <path d="M9.5 14.5C9.5 14.5 11 8.5 17 8.5C11 8.5 9.5 2.5 9.5 2.5C9.5 2.5 8 8.5 2 8.5C8 8.5 9.5 14.5 9.5 14.5Z" fill="url(#gemini-grad-init)"/>
                 </svg>
             </div>
-            <div class="message-content bot-message-body">안녕하세요! 저는 무엇이든 도와드릴 수 있는 AI 어시스턴트입니다. 코딩, 글쓰기, 정보 검색 등 어떤 것이든 물어보세요!</div>
+            <div class="message-content bot-message-body"></div>
         </div>
     </main>
 
@@ -348,7 +348,7 @@
             </button>
         </div>
 
-        <textarea id="user-input" rows="1" placeholder="여기에 프롬프트를 입력하세요..." autocomplete="off"></textarea>
+        <textarea id="user-input" rows="1" placeholder="Gemini???에게 물어보세요" autocomplete="off"></textarea>
         
         <button class="icon-btn" id="send-btn" title="보내기">
             <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
@@ -364,7 +364,7 @@
             <p>AI의 페르소나, 역할, 또는 답변 방식을 지시하는 배경 컨텍스트를 입력하세요.</p>
             <textarea id="system-prompt-input" placeholder="예: 당신은 친절한 한국어 교사입니다. 문법 오류를 항상 수정해주세요."></textarea>
             <div class="modal-actions">
-                <button class="btn btn-reset" id="reset-note-btn">기본값 초기화</button>
+                <button class="btn btn-reset" id="reset-note-btn">초기화</button>
                 <button class="btn btn-cancel" id="close-modal-btn">취소</button>
                 <button class="btn btn-save" id="save-note-btn">저장</button>
             </div>
@@ -397,7 +397,7 @@
         let chatHistory = [];
         
         // INTERNAL DEFAULT PROMPT - Hardcoded fallback behavior
-        const INTERNAL_DEFAULT_PROMPT = `당신은 구글 제미나이(Google Gemini)와 같은 다목적 AI 어시스턴트입니다. 사용자의 언어에 맞춰 자연스럽고 정확하게 답변해야 합니다.`;
+        const INTERNAL_DEFAULT_PROMPT = `You are a versatile AI assistant, similar to Google Gemini. Your primary task is to provide accurate, helpful, and natural-sounding responses, always adapting seamlessly to the language used by the user.`;
         
         // Use sessionStorage instead of localStorage so data clears when the session ends
         let savedUserPrompt = sessionStorage.getItem('gemini_clone_system_prompt');
