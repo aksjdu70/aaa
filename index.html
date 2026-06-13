@@ -156,7 +156,7 @@
 
         /* Generating / Thinking State */
         .bot-avatar.generating svg {
-            animation: geminiThink 1.5s linear infinite;
+            animation: geminiThink 1.5s ease-in-out infinite;
             filter: drop-shadow(0 0 8px rgba(155, 114, 203, 0.8));
         }
 
@@ -165,10 +165,11 @@
             50% { transform: scale(1.05); filter: drop-shadow(0 0 10px rgba(155, 114, 203, 0.6)); }
         }
 
+        /* Removed rotation, kept the pulsing scale */
         @keyframes geminiThink {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.15); }
-            100% { transform: rotate(360deg) scale(1); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
         }
 
         /* Pulsing Dots for Loading Text */
@@ -398,8 +399,8 @@
         // INTERNAL DEFAULT PROMPT - Hardcoded fallback behavior
         const INTERNAL_DEFAULT_PROMPT = `당신은 구글 제미나이(Google Gemini)와 같은 다목적 AI 어시스턴트입니다. 사용자의 언어에 맞춰 자연스럽고 정확하게 답변해야 합니다.`;
         
-        // Load custom prompt if it exists, otherwise implicitly use the internal default
-        let savedUserPrompt = localStorage.getItem('gemini_clone_system_prompt');
+        // Use sessionStorage instead of localStorage so data clears when the session ends
+        let savedUserPrompt = sessionStorage.getItem('gemini_clone_system_prompt');
         let currentSystemInstruction = savedUserPrompt && savedUserPrompt.trim() !== '' ? savedUserPrompt : INTERNAL_DEFAULT_PROMPT;
 
         // Auto-resize textarea
@@ -564,24 +565,22 @@
 
         // User Note Modal Behavior
         userNoteBtn.addEventListener('click', () => {
-            // Display saved prompt if exists, otherwise show empty box so user knows they are relying on internal default
-            systemPromptInput.value = localStorage.getItem('gemini_clone_system_prompt') || '';
+            systemPromptInput.value = sessionStorage.getItem('gemini_clone_system_prompt') || '';
             noteModal.classList.add('active');
         });
 
         closeModalBtn.addEventListener('click', () => noteModal.classList.remove('active'));
 
-        // Save Custom Prompt (If Empty -> Reverts to Default)
+        // Save Custom Prompt
         saveNoteBtn.addEventListener('click', () => {
             const newPrompt = systemPromptInput.value.trim();
             if (newPrompt) {
                 currentSystemInstruction = newPrompt;
-                localStorage.setItem('gemini_clone_system_prompt', newPrompt);
+                sessionStorage.setItem('gemini_clone_system_prompt', newPrompt);
                 appendNotice("✦ 시스템 프롬프트가 저장되었습니다.");
             } else {
-                // If they saved an empty box, treat it as a reset
                 currentSystemInstruction = INTERNAL_DEFAULT_PROMPT;
-                localStorage.removeItem('gemini_clone_system_prompt');
+                sessionStorage.removeItem('gemini_clone_system_prompt');
                 appendNotice("✦ 시스템 프롬프트가 기본값으로 돌아갔습니다.");
             }
             noteModal.classList.remove('active');
@@ -590,7 +589,7 @@
         // Explicit Reset Button
         resetNoteBtn.addEventListener('click', () => {
             currentSystemInstruction = INTERNAL_DEFAULT_PROMPT;
-            localStorage.removeItem('gemini_clone_system_prompt');
+            sessionStorage.removeItem('gemini_clone_system_prompt');
             systemPromptInput.value = '';
             noteModal.classList.remove('active');
             appendNotice("✦ 시스템 프롬프트가 기본값으로 초기화되었습니다.");
