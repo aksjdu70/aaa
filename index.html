@@ -1,301 +1,483 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoBot | Climate Change Expert</title>
+    <title>Gemini Clone AI</title>
     <style>
+        /* CSS Reset & Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
         :root {
-            --primary-color: #16a34a;
-            --primary-hover: #15803d;
-            --bg-color: #f0fdf4;
-            --chat-bg: #ffffff;
-            --user-msg: #e0f2fe;
-            --user-text: #0369a1;
-            --bot-msg: #f3f4f6;
-            --bot-text: #374151;
-            --border-color: #e5e7eb;
+            --bg-color: #ffffff;
+            --text-primary: #1f1f1f;
+            --text-secondary: #444746;
+            --input-bg: #f0f4f9;
+            --user-bubble: #f0f4f9;
+            --border-color: #e0e0e0;
+            --primary-blue: #0b57d0;
+            --hover-bg: #e1e5ea;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .chat-container {
-            width: 100%;
-            max-width: 500px;
-            height: 80vh;
-            background-color: var(--chat-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
 
-        .chat-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px;
-            text-align: center;
+        /* Top Header Navigation */
+        .top-nav {
+            padding: 16px 24px;
             font-size: 1.25rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .chat-header span {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 400;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        .chat-messages {
+        /* Chat History Area */
+        .chat-container {
             flex: 1;
-            padding: 20px;
             overflow-y: auto;
+            padding: 20px 20px 120px 20px; /* Bottom padding for floating input */
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 32px;
+            scroll-behavior: smooth;
         }
 
-        .message {
+        .message-row {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message-row.bot {
+            justify-content: flex-start;
+            gap: 16px;
+        }
+
+        .message-bubble {
             max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            line-height: 1.5;
-            font-size: 0.95rem;
+            line-height: 1.6;
+            font-size: 1rem;
             word-wrap: break-word;
         }
 
-        .message.user {
-            align-self: flex-end;
-            background-color: var(--user-msg);
-            color: var(--user-text);
-            border-bottom-right-radius: 2px;
+        .user .message-bubble {
+            background-color: var(--user-bubble);
+            padding: 12px 20px;
+            border-radius: 24px;
+            color: var(--text-primary);
         }
 
-        .message.bot {
-            align-self: flex-start;
-            background-color: var(--bot-msg);
-            color: var(--bot-text);
-            border-bottom-left-radius: 2px;
+        .bot .message-bubble {
+            padding: 4px 0;
+            color: var(--text-primary);
         }
 
-        .message.bot strong {
-            color: var(--primary-color);
-        }
-
-        .chat-input-area {
+        .bot-avatar {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
+            border-radius: 50%;
             display: flex;
-            padding: 15px;
-            background-color: var(--chat-bg);
-            border-top: 1px solid var(--border-color);
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Input Area (Floating at bottom) */
+        .input-wrapper {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            background-color: var(--input-bg);
+            border-radius: 32px;
+            display: flex;
+            align-items: flex-end;
+            padding: 8px 16px;
+            transition: background-color 0.3s;
+        }
+
+        .input-wrapper:focus-within {
+            background-color: #e9eef6;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 8px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: background-color 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
         }
 
         #user-input {
             flex: 1;
-            padding: 12px 20px;
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            outline: none;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        #user-input:focus {
-            border-color: var(--primary-color);
-        }
-
-        #send-btn {
-            background-color: var(--primary-color);
-            color: white;
+            background: transparent;
             border: none;
-            padding: 0 20px;
-            margin-left: 10px;
-            border-radius: 24px;
+            outline: none;
+            padding: 16px;
+            font-size: 1rem;
+            max-height: 200px;
+            resize: none;
+            color: var(--text-primary);
+        }
+
+        #user-input::placeholder {
+            color: #757575;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            width: 90%;
+            max-width: 500px;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-content h3 {
+            font-weight: 500;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: none;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .modal-content textarea:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
             cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
-        #send-btn:hover {
-            background-color: var(--primary-hover);
+        .btn-cancel {
+            background: transparent;
+            color: var(--primary-blue);
         }
 
-        #send-btn:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
+        .btn-cancel:hover {
+            background: var(--input-bg);
         }
 
-        /* Simple typing indicator */
+        .btn-save {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #0842a0;
+        }
+
         .typing {
             font-style: italic;
-            color: #6b7280;
-            font-size: 0.85rem;
-            align-self: flex-start;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
             display: none;
-            margin-left: 15px;
         }
+        
+        .system-notice {
+            text-align: center;
+            color: #757575;
+            font-size: 0.85rem;
+            margin: 10px 0;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            EcoBot
-            <span>Climate Change & Global Warming Expert</span>
-        </div>
-        
-        <div class="chat-messages" id="chat-messages">
-            <div class="message bot">
-                Hello! I am EcoBot, an expert on Climate Change and Global Warming. Ask me any questions you have, or let me know if you're ready for a quick quiz to test your environmental knowledge!
+    <div class="top-nav">
+        <span>✨</span> Gemini AI
+    </div>
+
+    <div class="chat-container" id="chat-messages">
+        <div class="message-row bot">
+            <div class="bot-avatar">✨</div>
+            <div class="message-bubble">
+                안녕하세요! 저는 무엇이든 도와드릴 수 있는 AI 어시스턴트입니다. 코딩, 글쓰기, 정보 검색 등 어떤 것이든 물어보세요!
             </div>
         </div>
+    </div>
+
+    <div class="input-wrapper">
+        <div class="input-actions">
+            <button class="icon-btn" id="gemini-mode-btn" title="Gemini 모드로 초기화 (Reset Context)">
+                <svg viewBox="0 0 24 24"><path d="M19 15l-1.4 3.6L14 20l3.6 1.4L19 25l1.4-3.6L24 20l-3.6-1.4zM10.5 2L8 8 2 10.5 8 13l2.5 6 2.5-6 6-2.5-6-2.5z"/></svg>
+            </button>
+            
+            <button class="icon-btn" id="user-note-btn" title="User Note (시스템 프롬프트 설정)">
+                <svg viewBox="0 0 24 24"><path d="M4 22q-.825 0-1.412-.587Q2 20.825 2 20V4q0-.825.588-1.413Q3.175 2 4 2h14q.825 0 1.413.587Q20 3.175 20 4v16q0 .825-.587 1.413Q18.825 22 18 22Zm0-2h14V4H4v16Zm2-3h10v-2H6v2Zm0-4h10v-2H6v2Zm0-4h10V7H6v2ZM4 20V4v16Z"/></svg>
+            </button>
+        </div>
+
+        <input type="text" id="user-input" placeholder="여기에 프롬프트를 입력하세요..." autocomplete="off" />
         
-        <div class="typing" id="typing-indicator">EcoBot is typing...</div>
-        
-        <div class="chat-input-area">
-            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off" />
-            <button id="send-btn">Send</button>
+        <button class="icon-btn" id="send-btn" title="보내기 (Send)">
+            <svg viewBox="0 0 24 24"><path d="M3 20v-6l8-2-8-2V4l19 8z"/></svg>
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="note-modal">
+        <div class="modal-content">
+            <h3>User Note (시스템 프롬프트)</h3>
+            <p style="font-size: 0.85rem; color: #757575;">AI의 페르소나, 역할, 또는 답변 방식을 지시하는 배경 컨텍스트를 입력하세요.</p>
+            <textarea id="system-prompt-input" placeholder="예: 당신은 친절한 한국어 교사입니다. 문법 오류를 항상 수정해주세요."></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="close-modal-btn">취소</button>
+                <button class="btn btn-save" id="save-note-btn">저장 및 적용</button>
+            </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 🛑 PASTE YOUR GOOGLE GEMINI API KEY BELOW 🛑
+        // 🛑 여기에 Google Gemini API 키를 입력하세요 🛑
         // ==========================================
         const API_KEY = 'AQ.Ab8RN6IVP1kQOkiDBRZZ_eb4Elr2YbUOSGMOILsWn5sSje2jwg'; 
-        
-        // We use gemini-1.5-flash as it is fast, highly capable, and ideal for chatbots
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
         // DOM Elements
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const typingIndicator = document.getElementById('typing-indicator');
+        const geminiModeBtn = document.getElementById('gemini-mode-btn');
+        const userNoteBtn = document.getElementById('user-note-btn');
+        
+        // Modal Elements
+        const noteModal = document.getElementById('note-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const saveNoteBtn = document.getElementById('save-note-btn');
+        const systemPromptInput = document.getElementById('system-prompt-input');
 
-        // The System Prompt: This defines the persona, rules, and behavior of the AI.
-        const SYSTEM_INSTRUCTION = `
-            You are 'EcoBot', an expert AI specializing exclusively in Climate Change, Global Warming, and environmental science. 
-            Your core directives are:
-            1. Provide highly accurate, fact-based, and scientifically sound answers regarding climate issues.
-            2. Proactively ask the user relevant quiz questions to test their knowledge or spark conversation. Do not overwhelm them; ask one question at a time.
-            3. When a user answers your quiz, evaluate their response. Explicitly state if they are Correct or Incorrect, explain why, and provide additional context if necessary.
-            4. If the user asks about a topic completely unrelated to climate change or the environment, politely decline to answer and steer the conversation back to climate science.
-            5. Keep your tone encouraging, educational, and conversational. Use basic formatting like bolding for emphasis.
-        `;
-
-        // We maintain an array of the conversation history to send to the API every time.
-        // This gives the model "memory" so it knows what quiz question it just asked.
+        // State Variables
         let chatHistory = [];
+        
+        // Default System Prompt (Broad AI Scope + Korean Support)
+        const DEFAULT_SYSTEM_PROMPT = `당신은 구글 제미나이(Google Gemini)와 같은 다목적 AI 어시스턴트입니다. 
+        사용자의 언어(주로 한국어)에 맞춰 자연스럽고 정확하게 답변해야 합니다. 
+        코딩, 번역, 요약, 일반 지식 등 모든 주제에 대해 친절하게 도움을 제공하세요.`;
 
-        // Utility: Convert basic Markdown (**bold** and \n) to HTML for the chat UI
+        let currentSystemInstruction = DEFAULT_SYSTEM_PROMPT;
+
+        // Formats Markdown (Bolding & Line breaks)
         function formatTextToHTML(text) {
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\n/g, '<br>');
         }
 
-        // Add a message to the UI
-        function appendMessage(sender, text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            msgDiv.innerHTML = formatTextToHTML(text);
-            chatMessages.appendChild(msgDiv);
-            
-            // Auto-scroll to the bottom
+        // Appends System Notice to UI
+        function appendNotice(text) {
+            const noticeDiv = document.createElement('div');
+            noticeDiv.classList.add('system-notice');
+            noticeDiv.textContent = text;
+            chatMessages.appendChild(noticeDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Handle sending the message
+        // Appends Message to UI
+        function appendMessage(sender, text) {
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('message-row', sender);
+
+            if (sender === 'bot') {
+                rowDiv.innerHTML = `
+                    <div class="bot-avatar">✨</div>
+                    <div class="message-bubble">${formatTextToHTML(text)}</div>
+                `;
+            } else {
+                rowDiv.innerHTML = `
+                    <div class="message-bubble">${formatTextToHTML(text)}</div>
+                `;
+            }
+
+            chatMessages.appendChild(rowDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Main Send Logic
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
-            // 1. Display user message
+            // Display User Message
             appendMessage('user', text);
             userInput.value = '';
-            
-            // Disable input while waiting for bot
-            sendBtn.disabled = true;
             userInput.disabled = true;
-            typingIndicator.style.display = 'block';
+            sendBtn.disabled = true;
 
-            // 2. Add user message to history state
+            // Add user message to state
             chatHistory.push({
                 role: "user",
                 parts: [{ text: text }]
             });
 
-            // 3. Prepare payload for Gemini API
+            // Prepare Payload with dynamic System Instruction
             const payload = {
                 system_instruction: {
-                    parts: [{ text: SYSTEM_INSTRUCTION }]
+                    parts: [{ text: currentSystemInstruction }]
                 },
                 contents: chatHistory
             };
 
             try {
-                // 4. Call the Gemini API
+                // Call Gemini API
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
                 const data = await response.json();
-                
-                // Extract the text response from the Gemini API data structure
                 const botReply = data.candidates[0].content.parts[0].text;
 
-                // 5. Add bot message to history state
+                // Add bot message to state
                 chatHistory.push({
                     role: "model",
                     parts: [{ text: botReply }]
                 });
 
-                // 6. Display bot message
+                // Display Bot Message
                 appendMessage('bot', botReply);
 
             } catch (error) {
-                console.error("Error communicating with Gemini API:", error);
-                appendMessage('bot', "I'm sorry, I'm having trouble connecting to my climate database right now. Please check your API key or network connection.");
+                console.error("API 연동 에러:", error);
+                appendMessage('bot', "죄송합니다. 현재 AI 네트워크에 연결할 수 없습니다. API 키를 확인해주세요.");
             } finally {
-                // Re-enable inputs
-                sendBtn.disabled = false;
                 userInput.disabled = false;
-                typingIndicator.style.display = 'none';
+                sendBtn.disabled = false;
                 userInput.focus();
             }
         }
 
-        // Event Listeners
+        // --- Event Listeners for Chat ---
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 sendMessage();
             }
         });
+
+        // --- Event Listeners for Gemini Mode ---
+        geminiModeBtn.addEventListener('click', () => {
+            currentSystemInstruction = DEFAULT_SYSTEM_PROMPT;
+            chatHistory = []; // Optional: Clear context for a fresh start
+            appendNotice("✨ Gemini 기본 모드로 전환되었습니다. 대화 컨텍스트가 초기화되었습니다.");
+        });
+
+        // --- Event Listeners for User Note Modal ---
+        userNoteBtn.addEventListener('click', () => {
+            systemPromptInput.value = currentSystemInstruction;
+            noteModal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            noteModal.classList.remove('active');
+        });
+
+        saveNoteBtn.addEventListener('click', () => {
+            const newPrompt = systemPromptInput.value.trim();
+            if (newPrompt) {
+                currentSystemInstruction = newPrompt;
+                appendNotice("📓 사용자 정의 시스템 프롬프트가 적용되었습니다.");
+            }
+            noteModal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside of it
+        noteModal.addEventListener('click', (e) => {
+            if (e.target === noteModal) {
+                noteModal.classList.remove('active');
+            }
+        });
+
     </script>
 </body>
 </html>
