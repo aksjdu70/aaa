@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBot | Climate Change Expert</title>
+    <style>
+        :root {
+            --primary-color: #16a34a;
+            --primary-hover: #15803d;
+            --bg-color: #f0fdf4;
+            --chat-bg: #ffffff;
+            --user-msg: #e0f2fe;
+            --user-text: #0369a1;
+            --bot-msg: #f3f4f6;
+            --bot-text: #374151;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            background-color: var(--chat-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .chat-header span {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--user-msg);
+            color: var(--user-text);
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background-color: var(--bot-msg);
+            color: var(--bot-text);
+            border-bottom-left-radius: 2px;
+        }
+
+        .message.bot strong {
+            color: var(--primary-color);
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            background-color: var(--chat-bg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            outline: none;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        #user-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        #send-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            margin-left: 10px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        #send-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #send-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Simple typing indicator */
+        .typing {
+            font-style: italic;
+            color: #6b7280;
+            font-size: 0.85rem;
+            align-self: flex-start;
+            display: none;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            EcoBot
+            <span>Climate Change & Global Warming Expert</span>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot">
+                Hello! I am EcoBot, an expert on Climate Change and Global Warming. Ask me any questions you have, or let me know if you're ready for a quick quiz to test your environmental knowledge!
+            </div>
+        </div>
+        
+        <div class="typing" id="typing-indicator">EcoBot is typing...</div>
+        
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off" />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🛑 PASTE YOUR GOOGLE GEMINI API KEY BELOW 🛑
+        // ==========================================
+        const API_KEY = 'YOUR_API_KEY_HERE'; 
+        
+        // We use gemini-1.5-flash as it is fast, highly capable, and ideal for chatbots
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+        // DOM Elements
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // The System Prompt: This defines the persona, rules, and behavior of the AI.
+        const SYSTEM_INSTRUCTION = `
+            You are 'EcoBot', an expert AI specializing exclusively in Climate Change, Global Warming, and environmental science. 
+            Your core directives are:
+            1. Provide highly accurate, fact-based, and scientifically sound answers regarding climate issues.
+            2. Proactively ask the user relevant quiz questions to test their knowledge or spark conversation. Do not overwhelm them; ask one question at a time.
+            3. When a user answers your quiz, evaluate their response. Explicitly state if they are Correct or Incorrect, explain why, and provide additional context if necessary.
+            4. If the user asks about a topic completely unrelated to climate change or the environment, politely decline to answer and steer the conversation back to climate science.
+            5. Keep your tone encouraging, educational, and conversational. Use basic formatting like bolding for emphasis.
+        `;
+
+        // We maintain an array of the conversation history to send to the API every time.
+        // This gives the model "memory" so it knows what quiz question it just asked.
+        let chatHistory = [];
+
+        // Utility: Convert basic Markdown (**bold** and \n) to HTML for the chat UI
+        function formatTextToHTML(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // Add a message to the UI
+        function appendMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.innerHTML = formatTextToHTML(text);
+            chatMessages.appendChild(msgDiv);
+            
+            // Auto-scroll to the bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Handle sending the message
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // 1. Display user message
+            appendMessage('user', text);
+            userInput.value = '';
+            
+            // Disable input while waiting for bot
+            sendBtn.disabled = true;
+            userInput.disabled = true;
+            typingIndicator.style.display = 'block';
+
+            // 2. Add user message to history state
+            chatHistory.push({
+                role: "user",
+                parts: [{ text: text }]
+            });
+
+            // 3. Prepare payload for Gemini API
+            const payload = {
+                system_instruction: {
+                    parts: [{ text: SYSTEM_INSTRUCTION }]
+                },
+                contents: chatHistory
+            };
+
+            try {
+                // 4. Call the Gemini API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Extract the text response from the Gemini API data structure
+                const botReply = data.candidates[0].content.parts[0].text;
+
+                // 5. Add bot message to history state
+                chatHistory.push({
+                    role: "model",
+                    parts: [{ text: botReply }]
+                });
+
+                // 6. Display bot message
+                appendMessage('bot', botReply);
+
+            } catch (error) {
+                console.error("Error communicating with Gemini API:", error);
+                appendMessage('bot', "I'm sorry, I'm having trouble connecting to my climate database right now. Please check your API key or network connection.");
+            } finally {
+                // Re-enable inputs
+                sendBtn.disabled = false;
+                userInput.disabled = false;
+                typingIndicator.style.display = 'none';
+                userInput.focus();
+            }
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
