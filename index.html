@@ -15,7 +15,7 @@
             --bg-main: #131314;
             --bg-input: #1e1f20;
             --text-primary: #e3e3e3;
-            --text-secondary: #c4c7c5; /* Off-white for idle icons/text */
+            --text-secondary: #c4c7c5;
             --border-subtle: #444746;
             --primary-blue: #a8c7fa; 
             --user-bubble: #1e1f20;
@@ -68,7 +68,7 @@
             font-weight: 500;
             color: var(--text-secondary);
             display: flex;
-            justify-content: space-between; /* Pushes logo left, button right */
+            justify-content: space-between; 
             align-items: center;
             user-select: none;
         }
@@ -238,7 +238,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--text-secondary); /* Applied to current SVG fill */
+            color: var(--text-secondary);
             transition: background-color 0.2s, color 0.2s;
         }
 
@@ -247,7 +247,6 @@
             color: var(--text-primary);
         }
 
-        /* Standard SVG sizing inside buttons */
         .icon-btn svg {
             width: 24px;
             height: 24px;
@@ -255,7 +254,7 @@
             transition: fill 0.2s;
         }
 
-        /* Send button has unique coloring/sizing overrides */
+        /* Send button overrides */
         #send-btn {
             margin-left: 8px;
             margin-bottom: 4px;
@@ -264,8 +263,7 @@
         #send-btn svg {
             width: 36px;
             height: 36px;
-            /* Removes currentColor to allow the hardcoded blue/white to show */
-            fill: none; 
+            fill: none; /* Keeps the stroke paths visible without filling the whole SVG */
         }
 
         #user-input {
@@ -396,10 +394,11 @@
         </div>
         
         <button class="icon-btn" id="user-note-btn" title="시스템 프롬프트 설정">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 19V5h14v14H5z" />
-                <path d="M7 7h10v2H7zm0 4h7v2H7z" />
-                <path d="M19.3 8.92c.39-.39.39-1.02 0-1.41l-1.58-1.58c-.39-.39-1.02-.39-1.41 0l-1.59 1.59 2.99 2.99 1.59-1.59zm-8.8 8.8l-2.99-2.99L15.3 6.94l2.99 2.99-7.79 7.79zM7 17v-2.99l.02-.02 2.97 2.97-.02.02H7z" />
+            <svg viewBox="0 0 100 100" fill="currentColor" fill-rule="evenodd" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 38 92 L 22 92 C 16.5 92 12 87.5 12 82 L 12 22 C 12 16.5 16.5 12 22 12 L 72 12 C 77.5 12 82 16.5 82 22 L 82 36 L 72 36 L 72 22 L 22 22 L 22 82 L 38 82 L 38 92 Z" />
+                <rect x="26" y="32" width="38" height="8" rx="2" />
+                <rect x="26" y="52" width="22" height="8" rx="2" />
+                <path d="M 57 45 C 57 42.2 59.2 40 62 40 L 78 40 C 80.8 40 83 42.2 83 45 L 83 75 L 70 88 L 57 75 Z M 65 50 L 65 71 L 70 77 L 75 71 L 75 50 Z" transform="translate(-12, 12) rotate(45 70 70)" />
             </svg>
         </button>
     </header>
@@ -426,8 +425,8 @@
     <div class="input-wrapper">
         <div class="input-tools">
             <button class="icon-btn" id="gemini-mode-btn" title="대화 초기화">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.65 6.35A7.95 7.95 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
                 </svg>
             </button>
         </div>
@@ -436,8 +435,8 @@
         
         <button class="icon-btn" id="send-btn" title="보내기">
             <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="20" r="20" fill="#1A73E8" />
-                <path d="M20 10l-7 7h5v11h4V17h5l-7-7z" fill="#ffffff" />
+                <circle cx="20" cy="20" r="20" fill="#2955c8" />
+                <path d="M20 27 V13 M13 20 l7 -7 l7 7" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
             </svg>
         </button>
     </div>
@@ -459,7 +458,7 @@
         // 🛑 API CONFIGURATION 🛑
         // ==========================================
         const API_KEY = 'AQ.Ab8RN6IVP1kQOkiDBRZZ_eb4Elr2YbUOSGMOILsWn5sSje2jwg'; 
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash:generateContent?key=${API_KEY}`;
 
         // DOM Elements
         const chatMessages = document.getElementById('chat-messages');
@@ -581,12 +580,13 @@
             }
         }
 
-        // --- Core Fixes (Korean IME & keydown) ---
+        // --- Event Listeners ---
         sendBtn.addEventListener('click', sendMessage);
+        
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
-                if (e.isComposing) return; 
+                if (e.isComposing) return; // Prevent double trigger with Korean IME
                 sendMessage();
             }
         });
@@ -597,7 +597,6 @@
             appendNotice("✦ 대화가 초기화되었습니다.");
         });
 
-        // The User Note Button is now in the header, functionality remains identical
         userNoteBtn.addEventListener('click', () => {
             systemPromptInput.value = currentSystemInstruction;
             noteModal.classList.add('active');
